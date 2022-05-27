@@ -7,6 +7,9 @@
 # BlueJ files
 *.ctxt
 
+# Ignore CVS folders
+CVS/
+
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
