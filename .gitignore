@@ -9,6 +9,7 @@
 
 # Ignore CVS folders
 CVS/
+bin/
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
