@@ -7,7 +7,7 @@
 # BlueJ files
 *.ctxt
 
-# Ignore CVS folders
+# Ignore CVS and binary folders
 CVS/
 bin/
 
