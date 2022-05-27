@@ -1,0 +1,131 @@
+
+<project name="MeehanMetaSpace" default="buildAll" basedir=".">
+  <description>
+    A script used to build all MeehanMetaSpace products using ANT.
+    </description>
+	
+  <property name="homedir" location="."/>
+  <property name="FacsXpertHome"  location="${homedir}"/>    
+  <property name="srcdir" location="${FacsXpertHome}/src"/>
+  <property name="comdir" location="${FacsXpertHome}/src/com"/>
+  <property name="libdir" location="${FacsXpertHome}/lib"/>
+  <!--New CG Module creation related-->
+  <property environment="env"/>
+  
+  
+    <!--Removes all Previous build related -->
+  <target name="clean" description="Cleans all, to force next build from scratch">
+    <!--Removes all generated class files during build -->
+	<delete dir="${FacsXpertHome}/classes" quiet="true"/>
+    <!--All generated JARS get Deleted-->
+	<delete file="${libdir}/mmsBasics.jar" quiet="true"/>
+	<delete file="${libdir}/mmsSwing.jar" quiet="true"/>
+	<delete file="${libdir}/mmsImages.jar" quiet="true"/>
+	<!--those timestamp java files also have to be deleted-->
+	<delete file="${comdir}/MeehanMetaSpace/BuildTime.java" quiet="true"/>
+  </target>
+ 
+  <!--Check the availability of Build Stamp-->  
+  <target name="BuildStampCheck">  	
+	<available file="${srcdir}/com/MeehanMetaSpace/BuildTime.java" property="MakeBuildTime.notRequired"/>
+  </target>
+	
+  <!--Create a template Build Stamp--> 
+  <target name="MakeBuildTime" depends="BuildStampCheck" unless="MakeBuildTime.notRequired">  
+    <echo file="${srcdir}/com/MeehanMetaSpace/BuildTime.java">package com.MeehanMetaSpace; 
+	public class BuildTime { 
+	public static String text="10-Dec-2007 3:04:09 AM";
+	public static long value=1121421849528l;
+	}</echo>
+  </target>
+  
+ <!-- Now entering build componets, MmsBasics and Protege -->
+  <target name="buildMmsBasics" depends="MakeBuildTime" description="needed to build the timestamp">
+	<echo>Entering buildMmsBasics</echo>
+	<echo>***********************************************</echo>  
+    
+	<mkdir dir="${FacsXpertHome}/classes"/>
+    <javac includeantruntime="false" srcdir="${srcdir}"
+           destdir="${FacsXpertHome}/classes"
+           classpath="${libdir}/jnlp.jar;
+                      ${libdir}/MRJToolkit.jar;
+		      ${libdir}/AppleJavaExtensions.jar;
+                      ${libdir}/commons-lang-2.0.jar"
+           includes="com/MeehanMetaSpace/*.java, com/MeehanMetaSpace/monitor/*.java"
+           source="1.6"
+           debug="true"
+           debuglevel="lines,vars,source"
+    />
+    <jar destfile="${libdir}/mmsBasics.jar"
+         basedir="${FacsXpertHome}/classes"
+         manifest="${comdir}/MeehanMetaSpace/manifest.mf"
+         update="true"
+		 includes="com/MeehanMetaSpace/*.class, com/MeehanMetaSpace/monitor/*.class"
+    />
+	<echo>************************************************</echo>
+	<echo>mmsBasic.jar creation successful</echo>
+	<echo>************************************************</echo>	   
+  </target>
+	
+ <!--BuildmmsSwingcmd-->
+  <target name="buildMmsSwing" depends="buildMmsBasics"
+    description="needed to build the timestamp">
+  	<java classname="com.MeehanMetaSpace.Basics"
+  	          classpath="${libdir}/mmsBasics.jar"
+  	          fork="true"
+  	          dir="${srcdir}/com/MeehanMetaSpace/swing">
+  	    <arg line="com.MeehanMetaSpace.swing"/>
+  	</java>
+	<echo>Entering buildMmsSwing</echo>
+	<echo>***********************************************</echo>	
+    <javac includeantruntime="false" srcdir="${srcdir}"
+           destdir="${FacsXpertHome}/classes"
+           classpath="${libdir}/jnlp.jar;
+                      ${libdir}/MRJToolkit.jar;
+					  ${libdir}/AppleJavaExtensions.jar;					  
+                      ${libdir}/mmsBasics.jar;
+					  ${libdir}/jgoodies-common-0.9.9.jar;   
+    				  ${libdir}/jGoodiesLookAndFeel.jar;
+                      ${libdir}/commons-lang-2.0.jar;
+    				  ${libdir}/quaqua.jar;
+    				  ${libdir}/PgsLookAndFeel-1.1.1.jar;
+    				  ${libdir}/commons-codec-1.10.jar;
+  					  ${libdir}/swingx-all-1.6.4.jar"
+           includes="com/MeehanMetaSpace/swing/*.java"
+           source="1.6"
+           debug="true"
+           debuglevel="lines,vars,source"
+    />	
+    <jar destfile="${libdir}/mmsSwing.jar"
+         basedir="${FacsXpertHome}/classes"
+         manifest="${comdir}/MeehanMetaSpace/manifest.mf"
+         update="true"
+		 includes="com/MeehanMetaSpace/swing/*.class"
+    />
+	<echo>************************************************</echo>
+	<echo>mmsSwing.jar creation successful</echo>
+	<echo>************************************************</echo>   
+  </target>
+	
+ <!--BuildMmsImages-->
+  <target name="buildMmsImages">
+	<echo>Entering buildMmsImages</echo>
+	<echo>***********************************************</echo>
+	<mkdir dir="${FacsXpertHome}/classes/com/MeehanMetaSpace/swing/images"/>
+    <copy todir="${FacsXpertHome}/classes/com/MeehanMetaSpace/swing/images">
+      <fileset dir="${comdir}/MeehanMetaSpace/swing/images"/>
+    </copy>
+	<jar destfile="${libdir}/mmsImages.jar"
+         basedir="${FacsXpertHome}/classes"
+		 update="true"
+		 includes="com/MeehanMetaSpace/swing/images/**"
+    />
+	<echo>************************************************</echo>
+	<echo>mmsImages.jar creation successful</echo>
+	<echo>************************************************</echo>
+  </target>
+	
+  <target name="buildAll" depends="buildMmsBasics, buildMmsSwing, buildMmsImages"
+    description="builds Everything that is in the script right now"/>
+	    
+</project>

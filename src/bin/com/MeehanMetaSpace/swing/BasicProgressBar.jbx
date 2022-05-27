@@ -1,0 +1,13 @@
+[PropertyInfo]
+accumulated,int,false,false, , ,false,<default>
+btns,JButton[],false,false, , ,false,<default>
+contentPane,JPanel,false,false, , ,false,<default>
+dialog,JDialog,false,false, , ,true,<default>
+progressUpdater,ProgressUpdater,false,false, , ,true,<default>
+tableModel,PersonalizableTableModel,false,false, , ,true,<default>
+value,int,false,false, , ,true,<default>
+[IconNames]
+
+
+
+
